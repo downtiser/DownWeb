@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Host Manager</title>
+    <link rel="stylesheet" type="text/css" href="../static/jquery-easyui-1.6.2/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="../static/jquery-easyui-1.6.2/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="../static/jquery-easyui-1.6.2/themes/demo.css">
+    <link rel="stylesheet" type="text/css" href="../static/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/bootstrap-3.3.7-dist/css/bootstrap-theme.min.css">
+    <style>
+        .header {
+            height: 60px;
+            background: #B3DFDA;
+            padding: 10px;
+            line-height: 60px;
+            overflow: hidden;
+        }
+
+        td,th{
+            padding: 3px;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .west-bar {
+            width: 163px;
+        }
+
+        .region {
+            margin-top: 0;
+        }
+
+        .region-title {
+            height: 30px;
+            font-size: 20px;
+            text-align: center;
+            line-height: 36px;
+            background-color: aliceblue;
+            cursor: pointer;
+        }
+
+        .region-title:hover {
+            background-color: #0092DC;
+        }
+
+        .host-list {
+            background-color: lightgray;
+        }
+
+        .host-list ul {
+            padding:5px 20px;
+            font-size: 16px;
+        }
+
+        .the-first {
+            margin-top: 0;
+        }
+
+        .hide {
+            display: none;
+        }
+        button{
+            border-radius: 0 !important;
+            /*padding: 7px 17px !important;*/
+        }
+        a{
+            color: white;
+        }
+        a:hover{
+            text-decoration: none;
+        }
+
+        .inner-frame{
+            width: 300px;
+            text-align: right;
+            margin: 5px;
+        }
+
+        .add-frame{
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body class="easyui-layout">
+    <div class="header" data-options="region:'north',border:false">
+        <i class="fa fa-desktop fa-3x" aria-hidden="true" style="margin-left: 135px"></i>
+        <span class="title">后台管理系统</span>
+    </div>
+    <div class="west-bar" data-options="region:'west',split:true,title:'Host List'" style="padding: 0">
+        <div class="region the-first">
+            <div class="region-title">CN</div>
+            <div class="host-list hide">
+                <ul>
+                    {% for dict in host_list %}
+                        {% if dict.region == "CN" %}
+                            <li>{{ dict.host_name }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="region">
+            <div class="region-title">US</div>
+            <div class="host-list hide">
+                <ul>
+                    {% for dict in host_list %}
+                        {% if dict.region == "US" %}
+                            <li>{{ dict.host_name }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="region">
+            <div class="region-title">UK</div>
+            <div class="host-list hide">
+                <ul>
+                    {% for dict in host_list %}
+                        {% if dict.region == "UK" %}
+                            <li>{{ dict.host_name }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'center',title:'Information'">
+        <div class="add-frame">
+            <button id="add" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#add-model">
+                Add
+            </button>
+            <div class="modal fade" id="add-model" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document" style="width: 450px">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Add Host</h4>
+                        </div>
+                        <form id="add-form" action="/host_manager/" method="post">
+                            <div class="modal-body">
+                                <div class="inner-frame">
+                                    <label for="region">Region:</label>
+                                    <input type="text" name="region" id="region">
+                                </div>
+                                <div class="inner-frame">
+                                    <label for="host-name">Host Name:</label>
+                                    <input type="text" name="host_name" id="host-name">
+                                </div>
+                                <div class="inner-frame">
+                                    <label for="host-ip">Host IP:</label>
+                                    <input type="text" name="host_ip" id="host-ip">
+                                </div>
+                                <div class="inner-frame">
+                                    <label for="host-port">Host Port:</label>
+                                    <input type="text" name="host_port" id="host-port">
+                                </div>
+                                <div class="inner-frame">
+                                    <label for="statue">Statue:</label>
+                                    <input type="text" name="statue" id="statue">
+                                </div>
+                                <div class="inner-frame">
+                                    <label for="os">OS:</label>
+                                    <input type="text" name="os" id="os">
+                                </div>
+                                <div class="inner-frame">
+                                    <label for="user-name">User name:</label>
+                                    <input type="text" name="user_name" id="user-name">
+                                    <span style="background-color: orangered">{{ error_msg }}</span>
+                                </div>
+                                <div class="inner-frame">
+                                    <label for="password">Password:</label>
+                                    <input type="password" name="password" id="password">
+                                </div >
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button id="add-submmit" type="button" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="delete-model" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Delete Host</h4>
+                        </div>
+                        <form action="/del_host/" method="post">
+                            <div class="modal-body">
+                                <div class="inner-frame">
+                                    <h4>You will delete the host:</h4>
+                                </div>
+                                <div class="inner-frame">
+                                    <label for="confirm-nid">ID:</label>
+                                    <input id="confirm-nid" name="nid" type="text">
+                                </div>
+                                <div class="inner-frame">
+                                    <label for="confirm-ip">Host IP:</label>
+                                    <input id="confirm-ip" name="confirm-ip" type="text">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-danger">Delete!</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="host-info">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Region</th>
+                    <th>Host name</th>
+                    <th>Host IP</th>
+                    <th>Port</th>
+                    <th>Operation</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for dict in host_list %}
+                    <tr>
+                        <td>{{ dict.nid }}</td>
+                        <td>{{ dict.region }}</td>
+                        <td>{{ dict.host_name }}</td>
+                        <td>{{ dict.host_ip }}</td>
+                        <td>{{ dict.host_port }}</td>
+                        <td>
+                            <a href="/detail/?nid={{ dict.nid }}">
+                            <button type="button" class="btn-primary btn-sm">Detail
+                            </button></a> <a class="delete-host" name="{{ dict.nid }}" ip="{{ dict.host_ip }}">
+                            <button type="button" class="btn-danger btn-sm" data-toggle="modal" data-target="#delete-model">Delete</button>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script type="text/javascript" src="../static/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="../static/jquery-easyui-1.6.2/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="../static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script>
+        $('.region-title').click(function () {
+            $(this).next().toggleClass('hide')
+        })
+
+        $('.delete-host').click(function () {
+            var nid = $(this).attr('name')
+            var ip = $(this).attr('ip')
+            $('#confirm-nid').val(nid)
+            $('#confirm-ip').val(ip)
+        })
+
+        $('#add-submmit').click(function () {
+            $.ajax({
+                url: '/host_manager/',
+                type: 'POST',
+                dataType: 'JSON',
+                data: $('#add-form').serialize(),
+                success: function (response) {
+                    if (response['statue']) {
+                        location.reload()
+                    } else {
+                        alert(response['error_msg'])
+                    }
+                },
+                error: function (response) {
+                    alert("Server down!")
+                }
+            })
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div>
+        <form action="/background/" method="post">
+            <input type="text" name="user_name" placeholder="input user name">
+            <input type="text" name="gender" placeholder="input gender">
+            <input type="text" name="email" placeholder="input email">
+            <input type="submit" value="Add">
+        </form>
+    </div>
+    <table border="1">
+        <thead>
+            <tr>
+                <td>User name</td>
+                <td>Gender</td>
+                <td>E-mail</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dict in user_list %}
+                <tr>
+                    <td>{{ dict.user_name }}</td>
+                    <td>{{ dict.gender }}</td>
+                    <td>{{ dict.email }}</td>
+                </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</body>
+</html>

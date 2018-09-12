@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .cover{
+            position: fixed;
+            z-index: 2;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-color: black;
+            opacity: 0.6;
+        }
+
+        .dialog{
+            position: fixed;
+            z-index: 3;
+            height: 300px;
+            width: 400px;
+            top: 150px;
+            left: 50%;
+            margin-left: -200px;
+            background-color: white;
+        }
+        .hide{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="dialog hide">
+        <form action="/applications/" method="post">
+            <div>
+                <label for="app-caption">应用名:</label>
+                <input id="app-caption" name="app_caption" type="text">
+            </div>
+            <div>
+                <label for="host-sele">主机列表:</label>
+                <select id="host-sele" name="host_select" multiple>
+                    {% for host in host_list %}
+                        <option value="{{ host.nid }}">{{ host.host_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <input id="dialog-submit" type="submit" value="提交">
+            <input id="dialog-edit" type="button" value="修改">
+            <input id="cancle" type="button" value="取消">
+        </form>
+    </div>
+    <div class="edit-dialog"></div>
+    <div class="cover hide"></div>
+    <div class="main-frame">
+        <input id="add" type="button" value="Add">
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>应用名称</th>
+                    <th>应用主机列表</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in app_list %}
+                    <tr app-id="{{ app.aid }}">
+                        <td>{{ app.caption }}</td>
+                        <td>
+                            {% for host in app.host.all %}
+                                <span nid="{{ host.nid }}" style="background-color: lightgray; padding: 0 5px">{{ host.host_name }}</span>
+                            {% endfor %}
+                        </td>
+                        <td><input class="edit" type="button" value="编辑">|<input class="delete" type="button" value="删除"></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script src="../static/jquery-1.12.4.min.js"></script>
+    <script>
+        $('#add').click(function () {
+            $('.cover, .dialog').removeClass('hide')
+            $('#dialog-edit').addClass('hide')
+            $('#dialog-submit').removeClass('hide')
+        })
+        $('#cancle').click(function () {
+            $('.dialog, .cover').addClass('hide')
+            $('#app-caption, #host-sele').val("")
+        })
+        $('.delete').click(function () {
+            var tag = $(this)
+            $.ajax({
+                url: '/delete_app/',
+                type: 'POST',
+                dataType: 'JSON',
+                data: {
+                    'app_id': $(this).parent().parent().attr('app-id')
+                },
+                success: function (response) {
+                    if (response['statue'] === true) {
+                        tag.parent().parent().remove()
+                    } else {
+                        alert('error_msg')
+                    }
+                },
+                error: function (response) {
+                    alert("Server down!")
+                }
+            })
+        })
+        $('.edit').click(function () {
+            $('.cover, .dialog').removeClass('hide')
+            $('#dialog-edit').removeClass('hide')
+            $('#dialog-submit').addClass('hide')
+            var aid = $(this).parent().parent().attr("app-id")
+            var caption = $(this).parent().prev().prev().text()
+            var nid_list = []
+            $(this).parent().prev().children().each(function () {
+                var nid = $(this).attr('nid')
+                nid_list.push(nid)
+            })
+            $('#app-caption').val(caption).attr("aid", aid)
+            $('#host-sele').val(nid_list)
+        })
+
+        $('#dialog-edit').click(function () {
+            $.ajax({
+                url: '/edit_app/',
+                type: "POST",
+                dataType: 'JSON',
+                data: {
+                    'aid': $('#app-caption').attr('aid'),
+                    'caption': $('#app-caption').val(),
+                    'select_host': JSON.stringify($('#host-sele').val())
+                },
+                success: function (response) {
+                    if (response['statue'] === true) {
+                        location.reload()
+                    } else {
+                        alert(response['error-msg'])
+                    }
+                },
+                error: function (response) {
+                    alert("Server down!")
+                }
+            })
+        })
+
+    </script>
+</body>
+</html>

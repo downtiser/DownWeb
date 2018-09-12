@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="../static/jquery-easyui-1.6.2/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="../static/jquery-easyui-1.6.2/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="../static/jquery-easyui-1.6.2/themes/demo.css">
+    <link rel="stylesheet" type="text/css" href="../static/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/bootstrap-3.3.7-dist/css/bootstrap-theme.min.css">
+    <style>
+        .header {
+            height: 60px;
+            background: #B3DFDA;
+            padding: 10px;
+            line-height: 60px;
+            overflow: hidden;
+        }
+        .title {
+            font-size: 25px;
+            font-weight: bold;
+        }
+        .back{
+            height: 64px;
+            text-align: right;
+            line-height: 64px;
+            padding-right: 70px;
+        }
+        .panel-body{
+            padding: 10px;
+        }
+        .inner-frame{
+            width: 300px;
+            text-align: right;
+            margin: 5px;
+        }
+
+    </style>
+</head>
+<body class="easyui-layout">
+    <div class="header" data-options="region:'north',border:false">
+        <i class="fa fa-desktop fa-3x" aria-hidden="true" style="margin-left: 135px"></i>
+        <span class="title">后台管理系统</span>
+    </div>
+    <div data-options="region:'center',title:'Information'">
+        <div class="panel panel-primary">
+            <div class="panel-heading" id="host_name">{{ host_dict.host_name }}</div>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Region</td>
+                            <td id="region_">{{ host_dict.region }}</td>
+                        </tr>
+                        <tr>
+                            <td>Host IP</td>
+                            <td id="ip">{{ host_dict.host_ip }}</td>
+                        </tr>
+                        <tr>
+                            <td>Port</td>
+                            <td id="port">{{ host_dict.host_port }}</td>
+                        </tr>
+                        <tr>
+                            <td>Statue</td>
+                            <td id="statue_">{{ host_dict.statue }}</td>
+                        </tr>
+                        <tr>
+                            <td>OS</td>
+                            <td id="os_">{{ host_dict.os }}</td>
+                        </tr>
+                        <tr>
+                            <td>User name</td>
+                            <td>{{ host_dict.user_name }}</td>
+                        </tr>
+                        <tr>
+                            <td>User password(MD5 encrypted)</td>
+                            <td>{{ host_dict.password }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="back">
+                <button type="button" id="edit" class="btn-success btn-lg" data-toggle="modal" data-target="#edit-model" style="margin-right: 10px">Edit</button>
+                <a href="/host_manager/">
+                    <button type="button" class="btn-primary btn-lg" >Back</button>
+                </a>
+            </div>
+            <div class="edit">
+                <div class="modal fade" id="edit-model" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document" style="width: 450px">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="myModalLabel">Edit Host</h4>
+                            </div>
+                            <form id="edit-form" action="/detail/" method="post ">
+                                <div class="modal-body">
+                                    <input type="text" name="nid" value="{{ host_dict.nid }}" style="display: none">
+                                    <div class="inner-frame" style="text-align: center;margin-left: -29px">
+                                        <label for="region">Region:</label>
+                                        <select id="region" name="region">
+                                            <option value="CN">CN</option>
+                                            <option value="US">US</option>
+                                            <option value="UK">UK</option>
+                                        </select>
+                                    </div>
+                                    <div class="inner-frame">
+                                        <label for="host-name">Host Name:</label>
+                                        <input type="text" name="host_name" id="host-name">
+                                    </div>
+                                    <div class="inner-frame">
+                                        <label for="host-ip">Host IP:</label>
+                                        <input type="text" name="host_ip" id="host-ip">
+                                    </div>
+                                    <div class="inner-frame">
+                                        <label for="host-port">Host Port:</label>
+                                        <input type="text" name="host_port" id="host-port">
+                                    </div>
+                                    <div class="inner-frame" style="text-align: left; margin-left: 75px;">
+                                        <label for="statue">Statue:</label>
+                                        <select name="statue" id="statue">
+                                            <option value="running">running</option>
+                                            <option value="stopped">stopped</option>
+                                            <option value="sleep">sleep</option>
+                                        </select>
+                                    </div>
+                                    <div class="inner-frame">
+                                        <label for="os">OS:</label>
+                                        <input type="text" name="os" id="os">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button id="edit-submit" type="button" class="btn btn-primary">Save changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="../static/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="../static/jquery-easyui-1.6.2/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="../static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script>
+        $('#edit').click(function () {
+            var region = $('#region_').text();
+            var host_name = $('#host_name').text();
+            var ip = $('#ip').text();
+            var port = $('#port').text();
+            var statue = $('#statue_').text();
+            var os = $('#os_').text();
+            $('#region').val(region)
+            $('#statue').val(statue)
+            $('#host-name').val(host_name);
+            $('#host-ip').val(ip);
+            $('#host-port').val(port)
+            $('#os').val(os)
+
+        })
+
+        $('#edit-submit').click(function () {
+            $.ajax({
+                url: '/detail/',
+                type: 'POST',
+                dataType: 'JSON',
+                data: $('#edit-form').serialize(),
+                success: function (response) {
+                    if (response['statue']) {
+                        location.reload()
+                    } else {
+                        alert(response['error_msg'])
+                    }
+                },
+                error: function (response) {
+                    alert("Server down!")
+                }
+            })
+        })
+    </script>
+</body>
+</html>
